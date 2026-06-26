@@ -44,38 +44,44 @@ const quotes = [
     { text: "Your time is limited, so don't waste it living someone else's life.", author: "Steve Jobs", category: "Life" },
     { text: "If life were predictable it would cease to be life, and be without flavor.", author: "Eleanor Roosevelt", category: "Life" },
     { text: "In order to write about life first you must live it.", author: "Ernest Hemingway", category: "Life" },
-    { text: "The secret of getting ahead is getting started.", author: "Mark Twain", category: "Action" },
+    { text: "The secret of getting ahead is getting started.", author: "Mark Twain", category: "Action" }
 ];
 
 // ── State ─────────────────────────────────────────────────────
 let lastIndex = -1;
 let quoteCount = 0;
-let favCount = 0;
-let isLiked = false;
+let savedQuotes = JSON.parse(localStorage.getItem('savedQuotes')) || [];
 let isAnimating = false;
 
 // ── DOM Elements ──────────────────────────────────────────────
-const quoteCard    = document.getElementById('quote-card');
-const quoteText    = document.getElementById('quote-text');
-const authorName   = document.getElementById('author-name');
-const authorAvatar = document.getElementById('author-avatar');
-const authorTitle  = document.getElementById('author-title');
-const quoteCategory= document.getElementById('quote-category');
-const newQuoteBtn  = document.getElementById('new-quote-btn');
-const copyBtn      = document.getElementById('copy-btn');
-const shareBtn     = document.getElementById('share-btn');
-const likeBtn      = document.getElementById('like-btn');
-const favCountEl   = document.getElementById('fav-count');
-const counterEl    = document.getElementById('quote-counter');
-const statusTime   = document.getElementById('status-time');
-const toast        = document.getElementById('toast');
-const splashScreen = document.getElementById('splash-screen');
-const app          = document.getElementById('app');
+const quoteCard            = document.getElementById('quote-card');
+const quoteText            = document.getElementById('quote-text');
+const authorName           = document.getElementById('author-name');
+const authorAvatar         = document.getElementById('author-avatar');
+const authorTitle          = document.getElementById('author-title');
+const quoteCategory        = document.getElementById('quote-category');
+const newQuoteBtn          = document.getElementById('new-quote-btn');
+const copyBtn              = document.getElementById('copy-btn');
+const shareBtn             = document.getElementById('share-btn');
+const likeBtn              = document.getElementById('like-btn');
+const favCountEl           = document.getElementById('fav-count');
+const counterEl            = document.getElementById('quote-counter');
+const toast                = document.getElementById('toast');
+const splashScreen         = document.getElementById('splash-screen');
+const app                  = document.getElementById('app');
+
+const headerTitle          = document.getElementById('header-title');
+const headerTagline        = document.getElementById('header-tagline');
+
+const homeView             = document.getElementById('home-view');
+const savedView             = document.getElementById('saved-view');
+const navHome              = document.getElementById('nav-home');
+const navSaved             = document.getElementById('nav-saved');
+const savedQuotesContainer = document.getElementById('saved-quotes-container');
 
 // ── Initialize ────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-    updateStatusTime();
-    setInterval(updateStatusTime, 30000);
+    updateFavBadge();
 
     // Show app after splash
     setTimeout(() => {
@@ -88,6 +94,34 @@ document.addEventListener('DOMContentLoaded', () => {
         splashScreen.style.display = 'none';
     }, 2800);
 });
+
+// ── Navigation ───────────────────────────────────────────────
+navHome.addEventListener('click', () => {
+    switchView('home');
+});
+
+navSaved.addEventListener('click', () => {
+    switchView('saved');
+});
+
+function switchView(viewName) {
+    if (viewName === 'home') {
+        navHome.classList.add('active');
+        navSaved.classList.remove('active');
+        homeView.classList.remove('hidden');
+        savedView.classList.add('hidden');
+        headerTitle.textContent = "QuoteVault";
+        headerTagline.textContent = "Tap to get inspired";
+    } else {
+        navHome.classList.remove('active');
+        navSaved.classList.add('active');
+        homeView.classList.add('hidden');
+        savedView.classList.remove('hidden');
+        headerTitle.textContent = "Saved Quotes";
+        headerTagline.textContent = "Your personal library";
+        renderSavedQuotes();
+    }
+}
 
 // ── Event Listeners ───────────────────────────────────────────
 newQuoteBtn.addEventListener('click', () => showNewQuote(true));
@@ -115,16 +149,22 @@ shareBtn.addEventListener('click', () => {
 });
 
 likeBtn.addEventListener('click', () => {
-    isLiked = !isLiked;
-    if (isLiked) {
-        favCount++;
+    const currentQuote = quotes[lastIndex];
+    const index = savedQuotes.findIndex(q => q.text === currentQuote.text);
+
+    if (index === -1) {
+        // Save
+        savedQuotes.push(currentQuote);
         likeBtn.classList.add('liked');
-        showToast('❤️ Added to favorites!');
+        showToast('❤️ Added to saved!');
     } else {
-        favCount = Math.max(0, favCount - 1);
+        // Remove
+        savedQuotes.splice(index, 1);
         likeBtn.classList.remove('liked');
+        showToast('💔 Removed from saved!');
     }
-    favCountEl.textContent = favCount;
+    localStorage.setItem('savedQuotes', JSON.stringify(savedQuotes));
+    updateFavBadge();
 });
 
 // Touch swipe support
@@ -188,13 +228,17 @@ function showNewQuote(animate) {
         updateQuoteContent(quote);
     }
 
-    // Reset like state
-    isLiked = false;
-    likeBtn.classList.remove('liked');
+    // Set correct like button state
+    const isAlreadySaved = savedQuotes.some(q => q.text === quote.text);
+    if (isAlreadySaved) {
+        likeBtn.classList.add('liked');
+    } else {
+        likeBtn.classList.remove('liked');
+    }
 
     // Update counter
     quoteCount++;
-    counterEl.textContent = `Quote ${quoteCount} of ∞`;
+    counterEl.textContent = `Quote ${quoteCount} viewed`;
 }
 
 // ── Update Quote Content ──────────────────────────────────────
@@ -240,13 +284,62 @@ function updateQuoteContent(quote) {
     authorTitle.textContent = titles[quote.author] || 'Author';
 }
 
-// ── Status Bar Clock ──────────────────────────────────────────
-function updateStatusTime() {
-    const now = new Date();
-    const hours = now.getHours();
-    const mins = now.getMinutes().toString().padStart(2, '0');
-    const h12 = hours % 12 || 12;
-    statusTime.textContent = `${h12}:${mins}`;
+// ── Update Favorites Badge ─────────────────────────────────────
+function updateFavBadge() {
+    favCountEl.textContent = savedQuotes.length;
+}
+
+// ── Render Saved Quotes List ───────────────────────────────────
+function renderSavedQuotes() {
+    savedQuotesContainer.innerHTML = '';
+
+    if (savedQuotes.length === 0) {
+        savedQuotesContainer.innerHTML = `
+            <div class="no-saved-quotes">
+                <div class="empty-icon">❤️</div>
+                <p class="empty-title">No saved quotes yet</p>
+                <p class="empty-desc">Tap the Like button on quotes you love to see them here.</p>
+            </div>
+        `;
+        return;
+    }
+
+    savedQuotes.forEach((quote, idx) => {
+        const item = document.createElement('div');
+        item.className = 'saved-quote-card';
+        item.innerHTML = `
+            <p class="saved-quote-text">"${quote.text}"</p>
+            <div class="saved-quote-footer">
+                <span class="saved-quote-author">— ${quote.author}</span>
+                <button class="delete-btn" data-index="${idx}" aria-label="Delete saved quote">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                    </svg>
+                </button>
+            </div>
+        `;
+
+        // Delete button listener
+        item.querySelector('.delete-btn').addEventListener('click', (e) => {
+            const index = parseInt(e.currentTarget.getAttribute('data-index'), 10);
+            savedQuotes.splice(index, 1);
+            localStorage.setItem('savedQuotes', JSON.stringify(savedQuotes));
+            updateFavBadge();
+            renderSavedQuotes();
+            showToast('💔 Removed from saved!');
+
+            // If the quote currently displayed on home view was deleted, un-like it
+            const currentQuote = quotes[lastIndex];
+            if (currentQuote && currentQuote.text === quote.text) {
+                likeBtn.classList.remove('liked');
+            }
+        });
+
+        savedQuotesContainer.appendChild(item);
+    });
 }
 
 // ── Toast Notification ────────────────────────────────────────

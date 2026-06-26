@@ -29,88 +29,85 @@
     <!-- Main App -->
     <div id="app" class="app hidden">
 
-        <!-- Status Bar -->
-        <div class="status-bar">
-            <span class="status-time" id="status-time">12:00</span>
-            <div class="status-icons">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
-            </div>
-        </div>
-
         <!-- App Header -->
         <header class="app-header">
             <div class="header-left">
                 <div class="app-logo">💬</div>
                 <div>
-                    <h1 class="app-title">QuoteVault</h1>
-                    <p class="app-tagline">Tap to get inspired</p>
+                    <h1 class="app-title" id="header-title">QuoteVault</h1>
+                    <p class="app-tagline" id="header-tagline">Tap to get inspired</p>
                 </div>
             </div>
-            <button class="header-btn" id="fav-btn" aria-label="Favorites count">
-                <span class="fav-icon">❤️</span>
-                <span class="fav-count" id="fav-count">0</span>
-            </button>
+            <div class="header-right">
+                <span class="fav-badge">❤️ <span id="fav-count">0</span></span>
+            </div>
         </header>
 
-        <!-- Quote Card -->
-        <main class="main-content">
-            <div class="quote-card" id="quote-card">
-                <div class="quote-category" id="quote-category">Inspiration</div>
-                <div class="quote-mark">"</div>
-                <p class="quote-text" id="quote-text">Loading...</p>
-                <div class="quote-author-section">
-                    <div class="author-avatar" id="author-avatar">S</div>
-                    <div class="author-info">
-                        <p class="author-name" id="author-name">—</p>
-                        <p class="author-title" id="author-title">Author</p>
+        <!-- Home View -->
+        <div id="home-view" class="view-container">
+            <main class="main-content">
+                <div class="quote-card" id="quote-card">
+                    <div class="quote-category" id="quote-category">Inspiration</div>
+                    <div class="quote-mark">"</div>
+                    <p class="quote-text" id="quote-text">Loading...</p>
+                    <div class="quote-author-section">
+                        <div class="author-avatar" id="author-avatar">S</div>
+                        <div class="author-info">
+                            <p class="author-name" id="author-name">—</p>
+                            <p class="author-title" id="author-title">Author</p>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Action Buttons -->
-            <div class="action-row">
-                <button class="action-btn" id="share-btn" aria-label="Share quote">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-                    <span>Share</span>
-                </button>
-                <button class="action-btn" id="copy-btn" aria-label="Copy quote">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-                    <span>Copy</span>
-                </button>
-                <button class="action-btn" id="like-btn" aria-label="Like quote">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-                    <span>Like</span>
-                </button>
-            </div>
-        </main>
+                <!-- Action Buttons -->
+                <div class="action-row">
+                    <button class="action-btn" id="share-btn" aria-label="Share quote">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                        <span>Share</span>
+                    </button>
+                    <button class="action-btn" id="copy-btn" aria-label="Copy quote">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        <span>Copy</span>
+                    </button>
+                    <button class="action-btn" id="like-btn" aria-label="Like quote">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                        <span>Like</span>
+                    </button>
+                </div>
+            </main>
 
-        <!-- New Quote Button -->
-        <div class="bottom-section">
-            <button class="new-quote-btn" id="new-quote-btn">
-                <span class="btn-icon">✦</span>
-                <span>New Quote</span>
-            </button>
-            <p class="quote-counter" id="quote-counter">Swipe through inspiration</p>
+            <!-- New Quote Button -->
+            <div class="bottom-section">
+                <button class="new-quote-btn" id="new-quote-btn">
+                    <span class="btn-icon">✦</span>
+                    <span>New Quote</span>
+                </button>
+                <p class="quote-counter" id="quote-counter">Swipe through inspiration</p>
+            </div>
+        </div>
+
+        <!-- Saved View -->
+        <div id="saved-view" class="view-container hidden">
+            <main class="main-content scrollable">
+                <div class="saved-quotes-container" id="saved-quotes-container">
+                    <div class="no-saved-quotes">
+                        <div class="empty-icon">❤️</div>
+                        <p class="empty-title">No saved quotes yet</p>
+                        <p class="empty-desc">Tap the Like button on quotes you love to see them here.</p>
+                    </div>
+                </div>
+            </main>
         </div>
 
         <!-- Bottom Nav -->
         <nav class="bottom-nav">
-            <button class="nav-item active" aria-label="Home">
+            <button class="nav-item active" id="nav-home" aria-label="Home">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
                 <span>Home</span>
             </button>
-            <button class="nav-item" aria-label="Explore">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 10.9c-.61 0-1.1.49-1.1 1.1s.49 1.1 1.1 1.1c.61 0 1.1-.49 1.1-1.1s-.49-1.1-1.1-1.1zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm2.19 12.19L6 18l3.81-8.19L18 6l-3.81 8.19z"/></svg>
-                <span>Explore</span>
-            </button>
-            <button class="nav-item" aria-label="Saved">
+            <button class="nav-item" id="nav-saved" aria-label="Saved">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
                 <span>Saved</span>
-            </button>
-            <button class="nav-item" aria-label="Profile">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                <span>Profile</span>
             </button>
         </nav>
     </div>
